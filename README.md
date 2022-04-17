@@ -20,5 +20,44 @@ Copy the code to your `script.rpy` file, if you want it to be in another file, m
 Place the images in the `images` folder and the audios to the `audio` folder
 
 ### How to use
+So if you want to use this minigame to your project, delete the screens and variables, make your own
 
+- Warning: *DO NOT* delete these variable
+```python
+default lockpicks = 25
+default timers = 0
+default set_timers = 0
+```
 
+First of all you need to create a `Chest` object
+
+```python
+default chest_1 = Chest("Chest 1", lock = Lock(10))
+```
+The `10` in `Lock(10)` is the difficulty you want it to be, the smaller the number is, the harder it is. But remember, the number should *ONLY* be in the range from 1 to 29
+
+Then add a screen that display your chest and do whatever you want there from positioning to the name bla bla
+```python
+screen chest_display(chests): # parameter is not a must, you can have it or not
+```
+Then you might ask: "What if i want to display the chest as an image 🤔?"
+
+Really simple use `imagebutton` to display it through the attribute `name`
+```python
+screen chest_display():
+    imagebutton:
+        auto "images/{}_%s.png".format(chest1.name)
+        action If(
+            chest.status == "closed", # Only allow open when it haven't been opened
+            true = If(
+                chest.keys, # Just saying if it's not None but in a fancy way
+                true = [Hide("chest_display"), Show("loot", True, chest)],
+                false = [SetVariable("current_chest", chest), Hide("chest_display"), ShowMenu("lock_picking", chest.lock)]),
+            false = Notify("Chest is opened"))
+        align (0.5, 0.5)
+```
+Make sure you have an image named `"Chest 1"` in your `images` folder (or whatever that match the chest's name)
+
+And that pretty much it, you can add your own inventory system or `Item` class and play around to add rewards to your inventory. Indepth of the minigame is explained detaily in the code's comment.
+
+Good luck with making your own game
