@@ -63,7 +63,7 @@ init python:
                 if len_mouse_to_root != 0: # To prevent the weird situation when the player try to put there mouse in the exact middle of the screen, if we just calculate the angle without the condition and that weird situation happen, an error "divide by zero" will raise
                     the_angle = calculate_angle(len_mouse_to_ox, len_mouse_to_root)
                 else:
-                    the_angle =  # Just set it to 0
+                    the_angle = 0 # Just set it to 0
 
                 if mouse_pos[0] > 1920/2: # If mouse is on the right half of the screen
                     if mouse_pos[1] >= 1080/2: # If mouse if on the lower part of the screen
