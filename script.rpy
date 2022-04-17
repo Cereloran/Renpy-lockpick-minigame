@@ -293,7 +293,7 @@ screen chest_display(chests):
                             difficulty_display = "medium"
                         elif chest.lock._difficulty in range(15, 30):
                             difficulty_display = "easy"
-                        elif chest.lock._difficulty >= 30:
+                        else:
                             difficulty_display = "invalid"
                     text "Difficulty: {}".format(difficulty_display)
                         
