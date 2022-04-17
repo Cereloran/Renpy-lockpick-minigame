@@ -12,6 +12,8 @@ Because `config.overlay_screen.append("inventory_icon")` wasn't work for me so t
 
 Ping me on [Zeil Learning discord server](https://discord.gg/BNEMkv3W) if you need help with understanding the code. This is my first time to public my github repository so sorry if it look messy.
 
+I'll be happy if someone tells me how can i improve my code
+
 ### How to download
 Find the only green button here and click on download zip, or you can open the `script.rpy` file and download audio and images separately
 
