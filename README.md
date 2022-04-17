@@ -58,6 +58,6 @@ screen chest_display():
 ```
 Make sure you have an image named `"Chest 1"` in your `images` folder (or whatever that match the chest's name)
 
-And that pretty much it, you can add your own inventory system or `Item` class and play around to add rewards to your inventory. Indepth of the minigame is explained detaily in the code's comment.
+And that's pretty much it, you can add your own inventory system or `Item` class and play around to add rewards to your inventory. Indepth of the minigame is explained detaily in the code's comment.
 
 Good luck with making your own game
