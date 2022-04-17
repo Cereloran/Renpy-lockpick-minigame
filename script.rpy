@@ -29,7 +29,7 @@ init python:
             self._pick_broke = False # If the pick just broke
             self._correct_pos = renpy.random.randint(0,180) # A point between 0 and 180 determined randomly when the lock is created
             self._difficulty = difficulty # A number between 1 and 29 - the lower the number, the more difficult the lock
-            self._break_time = (difficulty/10 + 0.75) # A number based on difficulty, the amount of time before the lock pick breaks
+            self._break_time = ((difficulty/15) + 0.75) # A number based on difficulty, the amount of time before the lock pick breaks
 
         # Checking for events
         def event(self, ev, x, y, st):
@@ -291,7 +291,7 @@ screen chest_display(chests):
                     text "Status: {}".format(chest.status)
                     python:
                         if chest.lock._difficulty in range(1, 5):
-                            difficulty_display = "hard"
+                            difficulty_display = "hard" # Actually insanely hard but whatever
                         elif chest.lock._difficulty in range(5, 10):
                             difficulty_display = "medium"
                         elif chest.lock._difficulty in range(10, 20):
@@ -353,7 +353,7 @@ default set_timers = 0
 define apple = Item("Apple", "Adam love it")
 define ramen = Item("Ramen", "Naruto's favourite food")
 
-default chest_1 = Chest("Chest 1", lock = Lock(10))
+default chest_1 = Chest("Chest 1", lock = Lock(3))
 default chest_2 = Chest("Chest 2", lock = Lock(15))
 default chest_3 = Chest("Chest 3", lock = Lock(20))
 default chest_4 = Chest("Chest 4", lock = Lock(25))
