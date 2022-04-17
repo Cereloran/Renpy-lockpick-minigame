@@ -74,7 +74,7 @@
 
 
                 #if the position of the pick is close to the sweet spot, the cylinder can rotate
-                if abs(self._pick_rotate - self._correct_pos) < self._difficulty:
+                if abs(self._pick_rotate - self._correct_pos) < self._difficulty/2:
                 #if self._pick_rotate in range((self._correct_pos-(self._difficulty)/2), (self._correct_pos+((self._difficulty)/2)+1)):
 
                     #if it's "close enough" as determined by the difficulty
@@ -287,14 +287,14 @@ screen chest_display(chests):
                     text chest.name 
                     text "Status: {}".format(chest.status)
                     python:
-                        if chest.lock._difficulty in range(1, 11):
+                        if chest.lock._difficulty in range(1, 5):
                             difficulty_display = "hard"
-                        elif chest.lock._difficulty in range(11, 21):
+                        elif chest.lock._difficulty in range(5, 15):
                             difficulty_display = "medium"
-                        elif chest.lock._difficulty in range(21, 31):
+                        elif chest.lock._difficulty in range(15, 30):
                             difficulty_display = "easy"
-                        elif chest.lock._difficulty > 30:
-                            difficulty_display = "for babies"
+                        elif chest.lock._difficulty >= 30:
+                            difficulty_display = "invalid"
                     text "Difficulty: {}".format(difficulty_display)
                         
                     textbutton "Open" action If(
@@ -350,8 +350,8 @@ default chest_1 = Chest("Chest 1", lock = Lock(10))
 default chest_2 = Chest("Chest 2", lock = Lock(15))
 default chest_3 = Chest("Chest 3", lock = Lock(20))
 default chest_4 = Chest("Chest 4", lock = Lock(25))
-default chest_5 = Chest("Chest 5", lock = Lock(31))
-
+default chest_5 = Chest("Chest 5", lock = Lock(29))
+# should only go from 1 to 29, if it's above 29 then you can click anywhere to unlock, which i don't know why
 default current_chest = None
 
 default inventory = []
