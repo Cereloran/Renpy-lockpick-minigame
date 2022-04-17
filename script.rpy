@@ -1,6 +1,7 @@
-﻿init python:
+init python:
     import pygame
     import math
+
     renpy.music.register_channel("Lock_Move", mixer= "sfx", loop=True)
     renpy.music.register_channel("Lock_Click", mixer= "sfx", loop=False, tight=True)
 
@@ -10,7 +11,7 @@
         def __init__(self, difficulty, resize=1920, **kwargs):
             super(Lock, self).__init__(**kwargs)
 
-            #These lines are for setting up the images used and the size of them
+            # Set Up images and resize
             self._width = resize
             self._lock_plate_image = Transform("images/lock_plate.png", size = (resize, resize))
             self._lock_cylinder_image = Transform("images/lock_cylinder.png", size = (resize, resize))
@@ -18,19 +19,19 @@
             self._lock_pick_image = Transform("images/lock_pick.png", size = (resize, resize))
             self._offset = (resize*2**0.5-resize)/2
 
-            #Variables
-            self._cylinder_min = 0
-            self._cylinder_max = 90
-            self._cylinder_rotate = 0 # the current angle of cylinder
-            self._cylinder_try_rotate = False #if the cylinder is attempting to rotate
-            self._pick_rotate = 90 #where the pick currently is
-            self._pick_can_rotate = True
-            self._pick_broke = False #if the pick just broke
-            self._correct_pos = renpy.random.randint(0,180) #a point between 0 and 180 determined randomly when the lock is created
-            self._difficulty = difficulty #a number between 1 and 29 - the lower the number, the more difficult the lock
-            self._break_time = (difficulty/10 + 0.75) #a number based on difficulty, the amount of time before the lock pick breaks
+            # Variables
+            self._cylinder_min = 0 # The minimum angle allowed for the cylinder
+            self._cylinder_max = 90 # The maximum angle allowed for the cylinder
+            self._cylinder_rotate = 0 # The current angle of cylinder
+            self._cylinder_try_rotate = False # If the cylinder is attempting to rotate (which mean the left mouse button is held down)
+            self._pick_rotate = 90 # The current angle of the pick
+            self._pick_can_rotate = True # If the pick can rotate
+            self._pick_broke = False # If the pick just broke
+            self._correct_pos = renpy.random.randint(0,180) # A point between 0 and 180 determined randomly when the lock is created
+            self._difficulty = difficulty # A number between 1 and 29 - the lower the number, the more difficult the lock
+            self._break_time = (difficulty/10 + 0.75) # A number based on difficulty, the amount of time before the lock pick breaks
 
-
+        # Checking for events
         def event(self, ev, x, y, st):
             
             LEFT = 1
@@ -45,48 +46,51 @@
                 self._cylinder_try_rotate = False
                 self._pick_can_rotate = True
                 self._pick_broke = False
-                #renpy.hide_screen("lock_picking")
 
         # Function that continuously updates the graphics of the lock
         def render(self, width, height, st, at):
 
             if self._pick_can_rotate: 
-                #calculating the pick rotate angle based on mouse position              
-                mouse_pos = renpy.get_mouse_pos() # current mouse postion
-                mouse_on_ox = (mouse_pos[0], 1080/2) # perpendicular of mouse pos on coordinate x axis
-                root = (1920/2, 1080/2) # origin of the coordinate
+                # Calculating the pick rotate angle based on mouse position 
+                # This is more accurate than the formular on renpy cookbook             
+                mouse_pos = renpy.get_mouse_pos() # Current mouse postion
+                mouse_on_ox = (mouse_pos[0], 1080/2) # Perpendicular of mouse pos on coordinate x axis
+                root = (1920/2, 1080/2) # Origin of the coordinate (but in vietnam we call it root)
 
-                len_mouse_to_ox = calculate_length(mouse_pos, mouse_on_ox) # calculate the distance from mouse pos to its perpendicular on coordinate x axis
-                len_mouse_to_root = calculate_length(mouse_pos, root) # calculate the distance from mouse pos to the origin
+                len_mouse_to_ox = calculate_length(mouse_pos, mouse_on_ox) # Calculate the distance from mouse pos to its perpendicular on coordinate x axis
+                len_mouse_to_root = calculate_length(mouse_pos, root) # Calculate the distance from mouse pos to the origin
+                
+                if len_mouse_to_root != 0: # To prevent the weird situation when the player try to put there mouse in the exact middle of the screen, if we just calculate the angle without the condition and that weird situation happen, an error "divide by zero" will raise
+                    the_angle = calculate_angle(len_mouse_to_ox, len_mouse_to_root)
+                else:
+                    the_angle =  # Just set it to 0
 
-                the_angle = calculate_angle(len_mouse_to_ox, len_mouse_to_root)
-
-                if mouse_pos[0] > 1920/2: # if mouse is on the right half of the screen
-                    if mouse_pos[1] >= 1080/2: # if mouse if on the lower part of the screen
-                        self._pick_rotate = 180 # pick can't rotate further than 180 degree
-                    else: # if mouse is on the upper part of the screen (and is on the right half)
-                        self._pick_rotate = 180 - the_angle
-                elif mouse_pos[0] < 1920/2: # if mouse is on the left part of the screen 
-                    if mouse_pos[1] >= 1080/2: # if mouse is on the lower part of the screen
-                        self._pick_rotate = 0 # pick can't rotate smaller than 0
-                    else: # if the mouse is on the upper part of the screen (and is on the left half)
+                if mouse_pos[0] > 1920/2: # If mouse is on the right half of the screen
+                    if mouse_pos[1] >= 1080/2: # If mouse if on the lower part of the screen
+                        self._pick_rotate = 180 # Pick can't rotate further than 180 degree
+                    else: # If mouse is on the upper part of the screen (and is on the right half)
+                        self._pick_rotate = 180 - the_angle # Draw the angle on a coordinate system, you will understand why it's 180 - the_angle
+                elif mouse_pos[0] < 1920/2: # If mouse is on the left part of the screen 
+                    if mouse_pos[1] >= 1080/2: # If mouse is on the lower part of the screen
+                        self._pick_rotate = 0 # Pick can't rotate smaller than 0
+                    else: # If the mouse is on the upper part of the screen (and is on the left half)
                         self._pick_rotate = the_angle
 
 
-                #if the position of the pick is close to the sweet spot, the cylinder can rotate
+                # If the position of the pick is close to the correct spot, the cylinder can rotate
+                # if self._pick_rotate in range((self._correct_pos-(self._difficulty)/2), (self._correct_pos+((self._difficulty)/2)+1)):
+                # The comment above doesn't works but i like to leave it here
                 if abs(self._pick_rotate - self._correct_pos) < self._difficulty/2:
-                #if self._pick_rotate in range((self._correct_pos-(self._difficulty)/2), (self._correct_pos+((self._difficulty)/2)+1)):
-
-                    #if it's "close enough" as determined by the difficulty
-                    self._cylinder_max = 90
+                    # If it's "close enough" as determined by the difficulty
+                    self._cylinder_max = 90 # Allow winning
                 else:
                     self._cylinder_max = 90 - abs(self._pick_rotate - self._correct_pos)*(30/self._difficulty)
-                    #if it's not close enough, it can still rotate a bit, based on how far away it is
-                    if self._cylinder_max <= 0:
+                    # If it's not close enough, it can still rotate a bit, based on how far away it is
+                    if self._cylinder_max <= 0: # Just in case
                         self._cylinder_max = 0
                 
             
-            #move the pick
+            # Move the pick (set up the image rotation)
             if self._pick_broke:
                 pick = Transform(child=None)
             else:
@@ -94,18 +98,18 @@
 
             #The following is all the render information for Lock and parts
             # Create transform to rotate the moving parts
-            if self._cylinder_try_rotate:
-                # if the button is down, which mean the player is trying to rotate
-                self._cylinder_rotate += (2*st)/(at+1) # start increasing the angle
-                # start to rotate the tension and cylinder image, which should have been 1 image only in the very beginning
+            if self._cylinder_try_rotate: # If the button is down, which mean the player is trying to rotate
+                
+                self._cylinder_rotate += (2*st)/(at+1) # Start increasing the angle
+                # Start to rotate the tension and cylinder image, which i think is more easier if they are 1 image only in the very beginning, but i can't draw and i don't own the image so who am i to say right :D
                 cylinder = Transform(child=self._lock_cylinder_image, rotate=self._cylinder_rotate, subpixel=True)
                 tension = Transform(child=self._lock_tension_image, rotate=self._cylinder_rotate, subpixel=True)
 
-                #it can only rotate up to self.cylinder_max
+                # It can only rotate up to self.cylinder_max (this prevent line 103 from turning the cylinder to a fidget spinner)
                 if self._cylinder_rotate > self._cylinder_max:
                     self._cylinder_rotate = self._cylinder_max
 
-                # if it gets to 90, you win
+                # If cylinder_rotate gets to 90, you win
                 if self._cylinder_rotate == 90:
                     # play the sound and display notify of victory
                     renpy.sound.stop(channel="Lock_Move") # stop every sound before it
@@ -125,10 +129,11 @@
                     renpy.show_screen("loot", False, current_chest)
 
                 elif self._cylinder_rotate == self._cylinder_max:
-                    #jiggle when it gets to self.cylinder_max
-                    if not renpy.sound.is_playing: # if not already playing the lock moving sound
+                    # Jiggle jiggle jiggle when it gets to self.cylinder_max (this is checked only if it's not 90 so don't worry that it gonna jiggle for your winning)
+                    if not renpy.sound.is_playing: # If not already playing the lock moving sound
                         renpy.sound.play("audio/lock_moving.mp3", channel="Lock_Move")
-
+                    
+                    # Setting up image jiggling
                     jiggle_cylinder = self._cylinder_rotate + renpy.random.randint(-2,2)
                     jiggle_tension = self._cylinder_rotate + renpy.random.randint(-3,3)
                     cylinder = Transform(child=self._lock_cylinder_image, subpixel=True, rotate=jiggle_cylinder)
@@ -137,7 +142,7 @@
                     self.pick_can_rotate = False
 
                     global lockpicks
-                    #if a timer here exceeds self.breakage, break a lock pick (play a sound and hide the image momentarily), reset its position, decrement number of lockpicks
+                    # If a timer here exceeds self._break_time, break a lock pick (play a sound and hide the image momentarily), reset its position, decrease number of lockpicks
                     global set_timers
                     global timers
                     if not set_timers:
@@ -146,7 +151,7 @@
 
                     if set_timers:
                         if at > timers+self._break_time:
-                            # play the sound of failure
+                            # Play the sound of failure
                             renpy.sound.stop(channel="Lock_Move")
                             renpy.sound.play("audio/lock_pick_break.mp3", channel="Lock_Click")
                             renpy.notify("Broke a lock pick!")
@@ -162,7 +167,7 @@
                             set_timers = False
                             pygame.mouse.set_pos([self._width/2, self._width/4])
 
-            else: #release, go back to the starting position
+            else: # Release, slowly rotate back to the starting position
                 if self._cylinder_rotate > 15:
                     renpy.sound.play("audio/lock_moving_back.mp3", channel="Lock_Click")
                 self._pick_can_rotate = True
@@ -171,10 +176,7 @@
                 if self._cylinder_rotate < self._cylinder_min:
                     self._cylinder_rotate = self._cylinder_min
                     renpy.sound.stop(channel="Lock_Click")
-                    #global set_timers
-                    #global timers
-                    #set_timers = False
-                    #timers = 0
+
                 cylinder = Transform(child=self._lock_cylinder_image, rotate=self._cylinder_rotate, subpixel=True)
                 tension = Transform(child=self._lock_tension_image, rotate=self._cylinder_rotate, subpixel=True)
 
@@ -201,11 +203,11 @@
 
     class Chest():
         def __init__(self, name, status = "closed", keys = None, lock = None, reward = None):
-            self._name = name # name can be used to compare if you have the right keys for the right chest
-            self._status = status # closed or opened, for image display and tell if you can try to open it again
-            self._keys = keys # if you got the keys of the chest, then you can open it without picking
-            self._lock = lock # what lock you're using
-            self._reward = [] # a list of reward
+            self._name = name # Name can be used to compare if you have the right keys for the right chest
+            self._status = status # "closed" or "opened", for image display and tell if you can try to open it again
+            self._keys = keys # If you got the keys of the chest, then you can open it without picking
+            self._lock = lock # What lock you're using (so that it have different difficulty and random correct_pos)
+            self._reward = [] # A list of reward
         @property 
         def name(self):
             return self._name 
@@ -238,7 +240,7 @@
         def reward(self, reward):
             self._reward = reward
 
-    class Item():
+    class Item(): # Well i wanted to make an Item so that i can use Inventory in my project, you can have whatever you want
         def __init__(self, name, info):
             self._name = name 
             self._info = info 
@@ -251,7 +253,8 @@
         def info(self):
             return self._info
     
-    class Key():
+    class Key(): # This make me thinking a lot whether should i make it or not, a class just for the name is too much but strings is not the proper way tho
+    # In fact you can create an Object named key that contain a number that match with the chest number by using Item class
         def __init__(self, name):
             self._name = name 
         
@@ -266,7 +269,7 @@
         return math.sqrt(x**2 + y**2)
 
     def calculate_angle(a, b):
-        # sin is the best solution because it can calculate the angle without errors on 90 degree
+        # sin is the best solution because it can calculate the angle without errors on 90 degree and it's really hard to have b value to 0
         sin_value = float(a)/float(b)
         return math.degrees(math.asin(sin_value))
     
@@ -289,18 +292,20 @@ screen chest_display(chests):
                     python:
                         if chest.lock._difficulty in range(1, 5):
                             difficulty_display = "hard"
-                        elif chest.lock._difficulty in range(5, 15):
+                        elif chest.lock._difficulty in range(5, 10):
                             difficulty_display = "medium"
-                        elif chest.lock._difficulty in range(15, 30):
+                        elif chest.lock._difficulty in range(10, 20):
                             difficulty_display = "easy"
+                        elif chest.lock._difficulty in range(20, 30):
+                            difficulty_display = "for babies"
                         else:
-                            difficulty_display = "invalid"
+                            difficulty_display = "You can click anywhere with this" # Which i don't think you want it, it's here so that i can demonstrate what gonna happen if you don't listen to me and have difficulty value out of the ramge(1, 30) 
                     text "Difficulty: {}".format(difficulty_display)
                         
                     textbutton "Open" action If(
                         chest.status == "closed",
                         true = If(
-                            chest.keys,
+                            chest.keys, # Just Saying if it's not None but in a fancy way
                             true = [Hide("chest_display"), Show("loot", True, chest)],
                             false = [SetVariable("current_chest", chest), Hide("chest_display"), ShowMenu("lock_picking", chest.lock)]),
                         false = Notify("Chest is opened"))
@@ -324,13 +329,15 @@ screen loot(used_keys, chest):
         if loots is not None:
             for loot in loots:
                 textbutton loot.name action [Function(pickup, loot), Function(remove_item, loots, loot)]
-            textbutton "Close" action [Hide("loot"), Jump("start")]
+            textbutton "Close" action [Hide("loot"), Jump("start")] # So this make things more realistic, you look at a chest and get to choose what to take out instead of take all of them and then throw away later on
         else:
             text "This chest is empty"
             timer 3.0 action [Hide("loot"), Jump("start")]
 
 screen inventory_icon():
     textbutton "Inventory" action [ShowMenu("inventory"), Hide("chest_display"), Hide("inventory_icon")]
+# I got really clumsy with displaying this because it got overlay situation all the time
+# But i do this just to display that the reward will go to your inventory so you can add your own
 
 screen inventory():
     vbox:
@@ -351,7 +358,7 @@ default chest_2 = Chest("Chest 2", lock = Lock(15))
 default chest_3 = Chest("Chest 3", lock = Lock(20))
 default chest_4 = Chest("Chest 4", lock = Lock(25))
 default chest_5 = Chest("Chest 5", lock = Lock(29))
-# should only go from 1 to 29, if it's above 29 then you can click anywhere to unlock, which i don't know why
+# Should only go from 1 to 29, if it's above 29 then you can click anywhere to unlock, which i don't know why
 default current_chest = None
 
 default inventory = []
