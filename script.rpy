@@ -29,7 +29,7 @@ init python:
             self._pick_broke = False # If the pick just broke
             self._correct_pos = renpy.random.randint(0,180) # A point between 0 and 180 determined randomly when the lock is created
             self._difficulty = difficulty # A number between 1 and 29 - the lower the number, the more difficult the lock
-            self._break_time = difficulty/10 # A number based on difficulty, the amount of time before the lock pick breaks
+            self._break_time = difficulty/10 +0.75 # A number based on difficulty, the amount of time before the lock pick breaks
 
         # Checking for events
         def event(self, ev, x, y, st):
