@@ -9,4 +9,4 @@ The lisence and every properties like audios and images belongs to the person in
 
 Ping me on Zeil Learning discord server if you need help with understanding the code. This is my first time to public my github repository so sorry if it look clumsy
 
- 
+From Rice Studio 🍙
