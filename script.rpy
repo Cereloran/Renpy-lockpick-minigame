@@ -38,10 +38,10 @@ init python:
             RIGHT = 3
 
             if ev.type == pygame.MOUSEBUTTONDOWN and ev.button == LEFT:
-                # if holding left mouse button
+                # If holding left mouse button
                 self._cylinder_try_rotate = True # the cylinder will try to rotate
             elif ev.type == pygame.MOUSEBUTTONUP and ev.button == LEFT:
-                # if release left mouse button
+                # If release left mouse button
                 renpy.sound.stop(channel="Lock_Move")
                 self._cylinder_try_rotate = False
                 self._pick_can_rotate = True
@@ -111,7 +111,7 @@ init python:
 
                 # If cylinder_rotate gets to 90, you win
                 if self._cylinder_rotate == 90:
-                    # play the sound and display notify of victory
+                    # Play the sound and display notify of victory
                     renpy.sound.stop(channel="Lock_Move") # stop every sound before it
                     renpy.sound.play("audio/lock_unlock.mp3", channel="Lock_Click")
                     renpy.notify("You unlocked the chest!")
