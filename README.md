@@ -10,7 +10,7 @@ The lisence and every properties like audios and images belongs to the person (J
 ### Dev note
 Because `config.overlay_screen.append("inventory_icon")` wasn't work for me so the screen code might be a bit clumsy with hiding and showing stuff, but i think you can fix that yourself. The key feature isn't being used and the inventory is just a list right now but i think it'll gonna be fun for you to make it yourself, beside, different people make different type of inventory class so i won't make one.
 
-Ping me on [Zeil Learning discord server](https://discord.gg/BNEMkv3W) if you need help with understanding the code. This is my first time to public my github repository so sorry if it look messy.
+Ping me on [Zeil Learning discord server](https://discord.gg/BNEMkv3W) (sherlockervn10 or kaodachet) if you need help with understanding the code. This is my first time to public my github repository so sorry if it look messy.
 
 I'll be happy if someone tells me how can i improve my code
 
