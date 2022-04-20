@@ -64,4 +64,13 @@ Make sure you have an image named `"Chest 1"` in your `images` folder (or whatev
 
 And that's pretty much it, you can add your own inventory system or `Item` class and play around to add rewards to your inventory. Indepth of the minigame is explained detaily in the code's comment.
 
+### Bugs
+- The lockpick can be minus right now, can be fixed by something like
+```python
+if lockpicks <=0:
+    lockpicks = 0
+```
+- Inventory button can be overlayed 
+- Dunno if this a bug but difficulty `1` seems to be undefeatable
+
 Good luck with making your own game.
