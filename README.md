@@ -15,6 +15,8 @@ Ping me on [Zeil Learning discord server](https://discord.gg/BNEMkv3W) (sherlock
 I'll be happy if someone tells me how can i improve my code
 
 ### How to download
+Your renpy version should be at least 7.4.9 if you don't want weird errors while implementing this
+
 Find the only green button here and click on download zip, or you can open the `script.rpy` file and download audio and images separately
 
 Copy the code to your `script.rpy` file, if you want it to be in another file, make sure you change `init python` to `init -1 python`. This will set the order of the minigame to go first
