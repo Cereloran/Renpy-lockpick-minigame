@@ -71,6 +71,5 @@ if lockpicks <=0:
     lockpicks = 0
 ```
 - Inventory button can be overlayed 
-- Dunno if this a bug but difficulty `1` seems to be undefeatable
 
 Good luck with making your own game.
